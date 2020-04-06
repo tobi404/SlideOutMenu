@@ -33,6 +33,7 @@ class ViewController: UIViewController {
         button.backgroundColor = .white
         button.layer.cornerRadius = 10
         button.tintColor = #colorLiteral(red: 0.1876248121, green: 0.4323936105, blue: 0.991342485, alpha: 1)
+        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -44,6 +45,7 @@ class ViewController: UIViewController {
         iv.heightAnchor.constraint(equalToConstant: 100).isActive = true
         iv.widthAnchor.constraint(equalToConstant: 100).isActive = true
         iv.contentMode = .scaleAspectFill
+        iv.translatesAutoresizingMaskIntoConstraints = false
         return iv
     }()
     
@@ -53,6 +55,7 @@ class ViewController: UIViewController {
         label.font = .systemFont(ofSize: 40, weight: .bold)
         label.textColor = .white
         label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -61,6 +64,7 @@ class ViewController: UIViewController {
         sv.axis = .vertical
         sv.alignment = .leading
         sv.distribution = .equalSpacing
+        sv.translatesAutoresizingMaskIntoConstraints = false
         return sv
     }()
     
@@ -72,6 +76,7 @@ class ViewController: UIViewController {
         bt.widthAnchor.constraint(equalToConstant: 200).isActive = true
         bt.heightAnchor.constraint(equalToConstant: 50).isActive = true
         bt.layer.cornerRadius = 20
+        bt.translatesAutoresizingMaskIntoConstraints = false
         return bt
     }()
     
@@ -84,6 +89,7 @@ class ViewController: UIViewController {
         fv.layer.shadowRadius = 20
         fv.layer.shadowColor = .some(#colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0))
         fv.layer.shadowOpacity = 0.8
+        fv.translatesAutoresizingMaskIntoConstraints = false
         return fv
     }()
     
@@ -96,6 +102,7 @@ class ViewController: UIViewController {
         smb.heightAnchor.constraint(equalToConstant: 50).isActive = true
         smb.widthAnchor.constraint(equalToConstant: 50).isActive = true
         smb.layer.cornerRadius = 20
+        smb.translatesAutoresizingMaskIntoConstraints = false
         return smb
     }()
     
@@ -105,22 +112,16 @@ class ViewController: UIViewController {
         
         setupButtons()
         setupBackLayout()
-        
-        view.addSubview(frontView)
-        frontView.fillSuperview()
-        frontView.layer.cornerRadius = 40
-        
-        frontView.addSubview(showMenuButton)
-        showMenuButton.anchor(top: frontView.topAnchor, leading: frontView.leadingAnchor, bottom: nil, trailing: nil, padding: .init(top: 70, left: 20, bottom: 0, right: 0))
-        showMenuButton.addTarget(self, action: #selector(showMenu), for: .touchUpInside)
+        setupFrontView()
     }
     
     
     @objc fileprivate func showMenu() {
-
+        
         UIView.animate(withDuration: 1, delay: 0, options: .curveEaseInOut, animations: {
             let threeD = CATransform3DMakeRotation(-0.5, 0, 1, 0.6)
             self.frontView.transform3D = CATransform3DTranslate(threeD, 300, 200, 0)
+            self.showMenuButton.alpha = 0
         })
         
     }
@@ -128,28 +129,60 @@ class ViewController: UIViewController {
     fileprivate func setupBackLayout() {
         view.backgroundColor = #colorLiteral(red: 0.1876248121, green: 0.4323936105, blue: 0.991342485, alpha: 1)
         view.addSubview(imageView)
-        
         view.addSubview(exitButton)
-        exitButton.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, bottom: nil, trailing: nil, padding: .init(top: 30, left: 20, bottom: 20, right: 0))
+        view.addSubview(name)
+        view.addSubview(stackView)
+        view.addSubview(bottomButton)
         
-        imageView.anchor(top: exitButton.bottomAnchor, leading: view.leadingAnchor, bottom: nil, trailing: nil, padding: .init(top: 40, left: 20, bottom: 20, right: 20))
         imageView.insetsLayoutMarginsFromSafeArea = true
         
-        view.addSubview(name)
-        name.anchor(top: imageView.bottomAnchor, leading: view.leadingAnchor, bottom: nil, trailing: view.trailingAnchor, padding: .init(top: 20, left: 20, bottom: 20, right: 20))
-        
-        view.addSubview(stackView)
-        stackView.anchor(top: name.bottomAnchor, leading: view.leadingAnchor, bottom: nil, trailing: nil, padding: .init(top: 40, left: 20, bottom: 0, right: 20), size: .init(width: 300, height: 300))
-        
-        view.addSubview(bottomButton)
-        bottomButton.anchor(top: stackView.bottomAnchor, leading: view.leadingAnchor, bottom: nil, trailing: nil, padding: .init(top: 40, left: 20, bottom: 0, right: 0))
+        NSLayoutConstraint.activate([
+            exitButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
+            exitButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            
+            imageView.topAnchor.constraint(equalTo: exitButton.bottomAnchor, constant: 40),
+            imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            
+            name.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 20),
+            name.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            name.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            stackView.topAnchor.constraint(equalTo: name.bottomAnchor, constant: 40),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            stackView.heightAnchor.constraint(equalToConstant: 300),
+            stackView.widthAnchor.constraint(equalToConstant: 300),
+            
+            bottomButton.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 40),
+            bottomButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            
+        ])
         
         exitButton.addTarget(self, action: #selector(closeMenu), for: .touchUpInside)
+    }
+    
+    fileprivate func setupFrontView(){
+        view.addSubview(frontView)
+        frontView.layer.cornerRadius = 40
+        frontView.translatesAutoresizingMaskIntoConstraints = false
+        frontView.addSubview(showMenuButton)
+        
+        NSLayoutConstraint.activate([
+            frontView.topAnchor.constraint(equalTo: view.topAnchor),
+            frontView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            frontView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            frontView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            showMenuButton.topAnchor.constraint(equalTo: frontView.topAnchor, constant: 70),
+            showMenuButton.leadingAnchor.constraint(equalTo: frontView.leadingAnchor, constant: 20),
+        ])
+        
+        showMenuButton.addTarget(self, action: #selector(showMenu), for: .touchUpInside)
     }
     
     @objc fileprivate func closeMenu() {
         UIView.animate(withDuration: 1, delay: 0, options: .curveEaseInOut, animations: {
             self.frontView.transform = .identity
+            self.showMenuButton.alpha = 1
         })
     }
     
